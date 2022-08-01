@@ -7,8 +7,8 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Europe/Paris
-      - FILE__PASSWORD=/config/password
-      - FILE__SUDO_PASSWORD=/config/password
+      - PASSWORD=paulflry
+      - SUDO_PASSWORD=paulflry
     volumes:
       - /home/paul/config/code-server:/config
     ports:
