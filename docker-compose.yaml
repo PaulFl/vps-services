@@ -1,0 +1,36 @@
+version: "2.1"
+services:
+  code-server:
+    image: lscr.io/linuxserver/code-server:latest
+    container_name: code-server
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+      - PASSWORD=paulflry
+      - SUDO_PASSWORD=paulflry
+    volumes:
+      - /home/paul/config/code-server:/config
+    ports:
+      - 127.0.0.1:8443:8443
+    restart: unless-stopped
+
+  swag:
+    image: lscr.io/linuxserver/swag:latest
+    container_name: swag
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+      - URL=fleury.io
+      - SUBDOMAINS=wildcard
+      - VALIDATION=dns
+      - DNSPLUGIN=ovh
+    volumes:
+      - /home/paul/config/swag:/config
+    ports:
+      - 443:443
+      - 80:80
+    restart: unless-stopped
