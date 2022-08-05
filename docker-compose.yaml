@@ -45,6 +45,19 @@ services:
       - net.ipv4.conf.all.src_valid_mark=1
     restart: unless-stopped
 
+  vsftpd:
+    image: fauria/vsftpd
+    container_name: vsftpd
+    environment:
+      - FTP_USER=admin
+      - FTP_PASS=ftppass
+      - PASV_ADDRESS=ftp.fleury.io
+      - PASV_ADDR_RESOLVE=YES
+    ports:
+      - 20:20
+      - 21:21
+      - 21100-21110:21100-21110
+
   swag:
     image: lscr.io/linuxserver/swag:latest
     container_name: swag
