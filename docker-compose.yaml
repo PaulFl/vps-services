@@ -24,6 +24,27 @@ services:
       - 127.0.0.1:8888:8888
     restart: unless-stopped
 
+  wireguard:
+    image: lscr.io/linuxserver/wireguard:latest
+    container_name: wireguard
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+      - SERVERURL=vpn.fleury.io #optional
+      - PEERS=pauls_iPhone, pauls_iPad, pauls_mac, guest #optional
+    volumes:
+      - /home/paul/config/wireguard:/config
+      - /lib/modules:/lib/modules
+    ports:
+      - 51820:51820/udp
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    restart: unless-stopped
+
   swag:
     image: lscr.io/linuxserver/swag:latest
     container_name: swag
