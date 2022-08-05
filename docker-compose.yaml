@@ -56,7 +56,6 @@ services:
       - LOG_STDOUT=YES
     volumes:
       - /home/paul/vps-services/vsftpd:/home/vsftpd
-      - /home/paul/config/vsftpd:/etc/vsftpd
     ports:
       - 20:20
       - 21:21
