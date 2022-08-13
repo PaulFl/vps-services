@@ -1,4 +1,4 @@
-version: "2.1"
+version: "2.4"
 services:
   code-server:
     image: lscr.io/linuxserver/code-server:latest
@@ -11,6 +11,8 @@ services:
       - TZ=Europe/Paris
     volumes:
       - /home/paul/config/code-server:/config
+    networks:
+      - proxy-network
     ports:
       - 127.0.0.1:8443:8443
     restart: unless-stopped
@@ -20,6 +22,8 @@ services:
     container_name: notebook
     volumes:
       - /home/paul/vps-services/notebook:/home/jovyan
+    networks:
+      - proxy-network
     ports:
       - 127.0.0.1:8888:8888
     restart: unless-stopped
@@ -76,7 +80,13 @@ services:
       - DNSPLUGIN=ovh
     volumes:
       - /home/paul/config/swag:/config
+    networks:
+      - proxy-network
     ports:
       - 443:443
       - 80:80
     restart: unless-stopped
+
+networks:
+  proxy-network:
+    name: proxy-network
