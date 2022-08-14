@@ -59,14 +59,16 @@ services:
       - /home/paul/config/pihole/dnsmasq.d:/etc/dnsmasq.d
     environment:
       - TZ=Europe/Paris
-      - PROXY_LOCATION=pihole
+      # - PROXY_LOCATION=pihole
         #- VIRTUAL_HOST=127.0.0.1
         #- VIRTUAL_PORT=80
     networks:
       proxy-network:
         ipv4_address: 172.29.0.2
     ports:
-      - 127.0.0.1:8001:80
+      - "53:53/tcp"
+      - "53:53/udp"
+      - 0.0.0.0:8001:80
     restart: unless-stopped
 
     
