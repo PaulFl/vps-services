@@ -1,5 +1,75 @@
 version: "2.4"
 services:
+  swag:
+    image: lscr.io/linuxserver/swag:latest
+    container_name: swag
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+      - URL=fleury.io
+      - SUBDOMAINS=wildcard
+      - VALIDATION=dns
+      - DNSPLUGIN=ovh
+    volumes:
+      - /home/paul/config/swag:/config
+    networks:
+      - proxy-network
+    ports:
+      - 443:443
+      - 80:80
+    restart: unless-stopped
+
+
+  wireguard:
+    image: lscr.io/linuxserver/wireguard:latest
+    container_name: wireguard
+    depends_on:
+      - pihole
+    dns:
+      - 172.29.0.2
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+      - SERVERURL=vpn.fleury.io #optional
+      - PEERS=pauls_iPhone, pauls_iPad, pauls_mac, guest #optional
+    volumes:
+      - /home/paul/config/wireguard:/config
+      - /lib/modules:/lib/modules
+    networks:
+      - proxy-network
+    ports:
+      - 51820:51820/udp
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    restart: unless-stopped
+
+
+  pihole:
+    image: pihole/pihole:latest
+    container_name: pihole
+    volumes:
+      - /home/paul/config/pihole/etc:/etc/pihole
+      - /home/paul/config/pihole/dnsmasq.d:/etc/dnsmasq.d
+    environment:
+      - TZ=Europe/Paris
+      - PROXY_LOCATION=pihole
+        #- VIRTUAL_HOST=127.0.0.1
+        #- VIRTUAL_PORT=80
+    networks:
+      proxy-network:
+        ipv4_address: 172.29.0.2
+    ports:
+      - 127.0.0.1:8001:80
+    restart: unless-stopped
+
+    
   code-server:
     image: lscr.io/linuxserver/code-server:latest
     container_name: code-server
@@ -28,50 +98,6 @@ services:
       - 127.0.0.1:8888:8888
     restart: unless-stopped
 
-  wireguard:
-    image: lscr.io/linuxserver/wireguard:latest
-    container_name: wireguard
-    #depends_on:
-      #- pihole
-        # dns:
-        #- 172.29.0.2
-    cap_add:
-      - NET_ADMIN
-      - SYS_MODULE
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Paris
-      - SERVERURL=vpn.fleury.io #optional
-      - PEERS=pauls_iPhone, pauls_iPad, pauls_mac, guest #optional
-    volumes:
-      - /home/paul/config/wireguard:/config
-      - /lib/modules:/lib/modules
-    networks:
-      - proxy-network
-    ports:
-      - 51820:51820/udp
-    sysctls:
-      - net.ipv4.conf.all.src_valid_mark=1
-    restart: unless-stopped
-
-  pihole:
-    image: pihole/pihole:latest
-    container_name: pihole
-    volumes:
-      - /home/paul/config/pihole/etc:/etc/pihole
-      - /home/paul/config/pihole/dnsmasq.d:/etc/dnsmasq.d
-    environment:
-      - TZ=Europe/Paris
-      - PROXY_LOCATION=pihole
-        #- VIRTUAL_HOST=127.0.0.1
-        #- VIRTUAL_PORT=80
-    networks:
-      proxy-network:
-        ipv4_address: 172.29.0.2
-    ports:
-      - 127.0.0.1:8001:80
-    restart: unless-stopped
 
   vsftpd:
     image: fauria/vsftpd
@@ -89,28 +115,13 @@ services:
       - 21:21
       - 21100-21110:21100-21110
 
-  swag:
-    image: lscr.io/linuxserver/swag:latest
-    container_name: swag
-    cap_add:
-      - NET_ADMIN
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Paris
-      - URL=fleury.io
-      - SUBDOMAINS=wildcard
-      - VALIDATION=dns
-      - DNSPLUGIN=ovh
-    volumes:
-      - /home/paul/config/swag:/config
-    networks:
-      - proxy-network
-    ports:
-      - 443:443
-      - 80:80
-    restart: unless-stopped
-
 networks:
   proxy-network:
     name: proxy-network
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.29.0.0/16
+          gateway: 172.29.0.1
+
