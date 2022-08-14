@@ -18,8 +18,8 @@ services:
     networks:
       - proxy-network
     ports:
-      - 443:443
-      - 80:80
+      - "443:443"
+      - "80:80"
     restart: unless-stopped
 
 
@@ -45,7 +45,7 @@ services:
     networks:
       - proxy-network
     ports:
-      - 51820:51820/udp
+      - "51820:51820/udp"
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
     restart: unless-stopped
@@ -68,7 +68,7 @@ services:
     ports:
       - "53:53/tcp"
       - "53:53/udp"
-      - 0.0.0.0:8001:80
+      - "0.0.0.0:8001:80"
     restart: unless-stopped
 
     
@@ -86,7 +86,7 @@ services:
     networks:
       - proxy-network
     ports:
-      - 127.0.0.1:8443:8443
+      - "127.0.0.1:8443:8443"
     restart: unless-stopped
 
   notebook:
@@ -97,7 +97,7 @@ services:
     networks:
       - proxy-network
     ports:
-      - 127.0.0.1:8888:8888
+      - "127.0.0.1:8888:8888"
     restart: unless-stopped
 
 
@@ -113,9 +113,9 @@ services:
     volumes:
       - /home/paul/vps-services/vsftpd:/home/vsftpd
     ports:
-      - 20:20
-      - 21:21
-      - 21100-21110:21100-21110
+      - "20:20"
+      - "21:21"
+      - "21100-21110:21100-21110"
 
 networks:
   proxy-network:
