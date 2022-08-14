@@ -31,6 +31,10 @@ services:
   wireguard:
     image: lscr.io/linuxserver/wireguard:latest
     container_name: wireguard
+    depends_on:
+      - pihole
+    dns:
+      - 172.29.0.2
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
@@ -43,10 +47,28 @@ services:
     volumes:
       - /home/paul/config/wireguard:/config
       - /lib/modules:/lib/modules
+    networks:
+      - proxy-network
     ports:
       - 51820:51820/udp
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
+    restart: unless-stopped
+
+  pihole:
+    image: pihole/pihole:latest
+    container_name: pihole
+    volumes:
+      - /home/paul/config/pihole/etc:/etc/pihole
+      - /home/paul/config/pihole/dnsmasq.d:/etc/dnsmasq.d
+    environment:
+      - TZ=Europe/Paris
+      - PROXY_LOCATION=pihole
+      - VIRTUAL_HOST=0.0.0.0
+      - VIRTUAL_PORT=80
+    networks:
+      proxy-network:
+        ipv4_address: 172.29.0.2
     restart: unless-stopped
 
   vsftpd:
