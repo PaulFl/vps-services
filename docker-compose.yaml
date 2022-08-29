@@ -91,9 +91,9 @@ services:
   vsftpd:
     image: fauria/vsftpd
     container_name: vsftpd
+    env_file:
+      - .env
     environment:
-      - FTP_USER=admin
-      - FTP_PASS=ftppass
       - PASV_ADDRESS=ftp.fleury.io
       - PASV_ADDR_RESOLVE=YES
       - LOG_STDOUT=YES
