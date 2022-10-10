@@ -105,6 +105,18 @@ services:
       - "21100-21110:21100-21110"
 
 
+  filebrowser:
+    image: filebrowser/filebrowser
+    container_name: filebrowser
+    volumes:
+      - /home/paul/vps-services/filebrowser:/srv
+      - /home/paul/config/filebrowser/filebrowser.db:/database.db
+      - /home/paul/config/filebrowser/.filebrowser.json:/.filebrowser.json
+    networks:
+      - proxy-network
+    restart: unless-stopped
+
+
 networks:
   proxy-network:
     name: proxy-network

@@ -1,4 +1,5 @@
 .env
 vsftpd/
 notebook/
+filebrowser/
 .DS_Store
